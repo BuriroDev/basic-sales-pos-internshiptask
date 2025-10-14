@@ -221,7 +221,7 @@ class products
     public static function restock_product($id, $pQuantity)
     {
         global $conn;
-        $sql = "UPDATE products SET pQuantity = $pQuantity WHERE pId = $id";
+        $sql = "UPDATE products SET pQuantity = pQuantity + $pQuantity WHERE pId = $id";
         if (mysqli_query($conn, $sql)) {
             echo "Product Successfully Restocked!";
         }
@@ -234,17 +234,12 @@ if (isset($pId) && isset($pName) && isset($pCategory) && isset($pCost) && isset(
 
 class customers
 {
-
-    public $name;
-    public $total_cost;
-    public $discount;
-    public $tax;
-    public $final_bill;
+    public static $redirectManu;
+    public static $mainList;
 
     static function addCustomer($pid, $pQuantity, $customerName, $discount, $tax)
     {
         global $conn;
-
 
         $sql1 = "SELECT pPrice AS price, pQuantity AS quantity, pName as name FROM products WHERE pId = $pid";
         $result = mysqli_query($conn, $sql1)->fetch_assoc();
@@ -273,6 +268,11 @@ class customers
         }
 
         $sql1 = "UPDATE products SET pQuantity = $upd_quantity WHERE pId = $pid";
-        mysqli_query($conn, $sql1);
+        if(mysqli_query($conn, $sql1)){
+            self::$redirectManu = readline("\n Press 0 for manu: ");
+            if(isset(self::$redirectManu)){
+                self::$mainList = 0; 
+            }
+        }
     }
 }
